@@ -34,7 +34,7 @@ node yab2karabiner.js <input.yab> -l spacebar -a japanese_eisuu -r right_command
 | `-o, --output <file>` | 出力先 JSON ファイルパス | 標準出力 |
 | `-t, --title <title>` | ルールのタイトル | `yab` ファイル先頭のコメント |
 | `-k, --layout <JP\|US>` | キーボードの物理的配列 (`JP` / `US`) | `JP` |
-| `-e, --encoding <enc>` | 入力ファイルの文字コード明示指定 (UTF-8, UTF-16LE, Shift_JIS等) | 自動判別 |
+| `-e, --encoding <enc>` | 入力ファイルの文字コード指定 (`auto`, `utf-8`, `utf-16le`, `shift_jis`等) | `auto` (自動判別) |
 | `-L, --left-thumb <key>` | 左親指シフトキー（同手・異手一括指定） | - |
 | `-R, --right-thumb <key>` | 右親指シフトキー（同手・異手一括指定） | - |
 | `-l, --left-thumb-1 <key>` | 左同手親指シフトキー | `spacebar` |

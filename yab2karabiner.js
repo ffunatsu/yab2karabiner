@@ -675,7 +675,7 @@ function parseArgs(args) {
 		leftThumb2: "spacebar",
 		rightThumb1: "insert",
 		rightThumb2: "insert",
-		encoding: null,
+		encoding: "auto",
 		help: false,
 	};
 
@@ -735,7 +735,7 @@ function parseArgs(args) {
 function decodeYabBuffer(buffer, specifiedEncoding) {
 	if (!buffer || buffer.length === 0) return "";
 
-	if (specifiedEncoding) {
+	if (specifiedEncoding && specifiedEncoding.toLowerCase() !== "auto") {
 		return new TextDecoder(specifiedEncoding).decode(buffer);
 	}
 
@@ -813,7 +813,7 @@ function printHelp() {
   -o, --output <file>                  出力先のJSONファイルパス (省略時は標準出力)
   -t, --title <title>                  ルールのタイトル (省略時はyabファイル1行目のコメント)
   -k, --layout <JP|US>                 キーボード配列 (デフォルト: JP)
-  -e, --encoding <enc>                 文字コード明示指定 (省略時はUTF-8/UTF-16/Shift-JIS等を自動判定)
+  -e, --encoding <enc>                 文字コード指定 (デフォルト: auto, 自動判別。utf-8, utf-16le, shift_jis等)
   -L, --left-thumb <key>               左親指シフトキー (両方一括設定)
   -R, --right-thumb <key>              右親指シフトキー (両方一括設定)
   -l, --left-thumb-1 <key>             左同手親指シフトキー (デフォルト: spacebar)
