@@ -4,7 +4,7 @@
 
 ## 概要
 
-Web アプリケーション [Yama2Kara](https://potting.syuriken.jp/webApps/Yama2Kara/index.html) （「やまぶきRの設定ファイル(*.yab)をおおよそKarabiner-ElementsのJSONにするやーつ」） の変換ロジックを Node.js (ローカル実行) 環境向けに移植したスクリプトです。
+Web アプリケーション [Yama2Kara](https://potting.syuriken.jp/webApps/Yama2Kara/index.html) の変換ロジックを Node.js 環境向けに移植したスクリプトです。
 
 ## 必要要件
 
@@ -19,8 +19,11 @@ node yab2karabiner.js <input.yab>
 # ファイルに出力
 node yab2karabiner.js <input.yab> -o output.json
 
-# US配列で出力
-node yab2karabiner.js <input.yab> -l US -o output.json
+# US配列、親指シフトキーを指定して出力
+node yab2karabiner.js <input.yab> -k US -l spacebar -r right_command -o output.json
+
+# 同手・異手を個別に指定して出力
+node yab2karabiner.js <input.yab> -L spacebar -a b -R insert -b v -o output.json
 ```
 
 ### コマンドライン引数
@@ -30,13 +33,13 @@ node yab2karabiner.js <input.yab> -l US -o output.json
 | `<input.yab>` / `-i, --input` | 入力となるやまぶきR設定ファイルパス | (必須、または標準入力) |
 | `-o, --output <file>` | 出力先 JSON ファイルパス | 標準出力 |
 | `-t, --title <title>` | ルールのタイトル | `yab` ファイル先頭のコメント |
-| `-l, --layout <JP\|US>` | キーボードの物理的配列 (`JP` / `US`) | `JP` |
-| `--left-thumb-1 <key>` | 左同手親指シフトキー | `spacebar` |
-| `--left-thumb-2 <key>` | 左異手親指シフトキー | `spacebar` |
-| `--right-thumb-1 <key>` | 右同手親指シフトキー | `insert` |
-| `--right-thumb-2 <key>` | 右異手親指シフトキー | `insert` |
-| `--left-thumb <key>` | 左親指シフトキー（同手・異手一括指定） | - |
-| `--right-thumb <key>` | 右親指シフトキー（同手・異手一括指定） | - |
+| `-k, --layout <JP\|US>` | キーボードの物理的配列 (`JP` / `US`) | `JP` |
+| `-l, -lt, --left-thumb <key>` | 左親指シフトキー（同手・異手一括指定） | - |
+| `-r, -rt, --right-thumb <key>` | 右親指シフトキー（同手・異手一括指定） | - |
+| `-L, -lt1, --left-thumb-1 <key>` | 左同手親指シフトキー | `spacebar` |
+| `-a, -lt2, --left-thumb-2 <key>` | 左異手親指シフトキー | `spacebar` |
+| `-R, -rt1, --right-thumb-1 <key>` | 右同手親指シフトキー | `insert` |
+| `-b, -rt2, --right-thumb-2 <key>` | 右異手親指シフトキー | `insert` |
 | `-h, --help` | ヘルプメッセージを表示 | - |
 
 ## Karabiner-Elements への適用

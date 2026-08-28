@@ -693,27 +693,27 @@ function parseArgs(args) {
 		} else if (arg === "-t" || arg === "--title") {
 			options.title = args[++i];
 			i++;
-		} else if (arg === "-l" || arg === "--layout") {
+		} else if (arg === "-k" || arg === "--layout") {
 			options.keyboardLayout = args[++i].toUpperCase();
 			i++;
-		} else if (arg === "--left-thumb-1") {
+		} else if (arg === "-L" || arg === "-lt1" || arg === "--lt1" || arg === "--left-thumb-1") {
 			options.leftThumb1 = args[++i];
 			i++;
-		} else if (arg === "--left-thumb-2") {
+		} else if (arg === "-a" || arg === "-lt2" || arg === "--lt2" || arg === "--left-thumb-2") {
 			options.leftThumb2 = args[++i];
 			i++;
-		} else if (arg === "--right-thumb-1") {
+		} else if (arg === "-R" || arg === "-rt1" || arg === "--rt1" || arg === "--right-thumb-1") {
 			options.rightThumb1 = args[++i];
 			i++;
-		} else if (arg === "--right-thumb-2") {
+		} else if (arg === "-b" || arg === "-rt2" || arg === "--rt2" || arg === "--right-thumb-2") {
 			options.rightThumb2 = args[++i];
 			i++;
-		} else if (arg === "--left-thumb") {
+		} else if (arg === "-l" || arg === "-lt" || arg === "--lt" || arg === "--left-thumb") {
 			const val = args[++i];
 			options.leftThumb1 = val;
 			options.leftThumb2 = val;
 			i++;
-		} else if (arg === "--right-thumb") {
+		} else if (arg === "-r" || arg === "-rt" || arg === "--rt" || arg === "--right-thumb") {
 			const val = args[++i];
 			options.rightThumb1 = val;
 			options.rightThumb2 = val;
@@ -736,21 +736,22 @@ function printHelp() {
   node yab2karabiner.js [オプション] <input.yab>
 
 オプション:
-  -i, --input <file>         入力となるやまぶきR設定ファイル (*.yab)
-  -o, --output <file>        出力先のJSONファイルパス (省略時は標準出力)
-  -t, --title <title>        ルールのタイトル (省略時はyabファイル1行目のコメント)
-  -l, --layout <JP|US>       キーボード配列 (デフォルト: JP)
-  --left-thumb-1 <key>       左同手親指シフトキー (デフォルト: spacebar)
-  --left-thumb-2 <key>       左異手親指シフトキー (デフォルト: spacebar)
-  --right-thumb-1 <key>      右同手親指シフトキー (デフォルト: insert)
-  --right-thumb-2 <key>      右異手親指シフトキー (デフォルト: insert)
-  --left-thumb <key>         左親指シフトキー (両方一括設定)
-  --right-thumb <key>        右親指シフトキー (両方一括設定)
-  -h, --help                 このヘルプメッセージを表示
+  -i, --input <file>                       入力となるやまぶきR設定ファイル (*.yab)
+  -o, --output <file>                      出力先のJSONファイルパス (省略時は標準出力)
+  -t, --title <title>                      ルールのタイトル (省略時はyabファイル1行目のコメント)
+  -k, --layout <JP|US>                     キーボード配列 (デフォルト: JP)
+  -l, -lt, --left-thumb <key>              左親指シフトキー (両方一括設定)
+  -r, -rt, --right-thumb <key>             右親指シフトキー (両方一括設定)
+  -L, -lt1, --left-thumb-1 <key>           左同手親指シフトキー (デフォルト: spacebar)
+  -a, -lt2, --left-thumb-2 <key>           左異手親指シフトキー (デフォルト: spacebar)
+  -R, -rt1, --right-thumb-1 <key>          右同手親指シフトキー (デフォルト: insert)
+  -b, -rt2, --right-thumb-2 <key>          右異手親指シフトキー (デフォルト: insert)
+  -h, --help                               このヘルプメッセージを表示
 
 例:
   node yab2karabiner.js sample.yab -o myMapping.json
-  node yab2karabiner.js sample.yab -l US --left-thumb spacebar --right-thumb right_command
+  node yab2karabiner.js sample.yab -k US -l spacebar -r right_command
+  node yab2karabiner.js sample.yab -L spacebar -a b -R insert -b v
 `);
 }
 
