@@ -675,6 +675,7 @@ function parseArgs(args) {
 		leftThumb2: "spacebar",
 		rightThumb1: "insert",
 		rightThumb2: "insert",
+		encoding: null,
 		help: false,
 	};
 
@@ -695,6 +696,9 @@ function parseArgs(args) {
 			i++;
 		} else if (arg === "-k" || arg === "--layout") {
 			options.keyboardLayout = args[++i].toUpperCase();
+			i++;
+		} else if (arg === "-e" || arg === "--encoding") {
+			options.encoding = args[++i];
 			i++;
 		} else if (arg === "-L" || arg === "--left-thumb") {
 			const val = args[++i];
@@ -728,6 +732,75 @@ function parseArgs(args) {
 	return options;
 }
 
+function decodeYabBuffer(buffer, specifiedEncoding) {
+	if (!buffer || buffer.length === 0) return "";
+
+	if (specifiedEncoding) {
+		return new TextDecoder(specifiedEncoding).decode(buffer);
+	}
+
+	// 1. BOM (Byte Order Mark) 判定
+	if (buffer.length >= 3 && buffer[0] === 0xef && buffer[1] === 0xbb && buffer[2] === 0xbf) {
+		return new TextDecoder('utf-8').decode(buffer.subarray(3));
+	}
+	if (buffer.length >= 2 && buffer[0] === 0xff && buffer[1] === 0xfe) {
+		return new TextDecoder('utf-16le').decode(buffer.subarray(2));
+	}
+	if (buffer.length >= 2 && buffer[0] === 0xfe && buffer[1] === 0xff) {
+		return new TextDecoder('utf-16be').decode(buffer.subarray(2));
+	}
+
+	// 2. BOMなし UTF-16LE / UTF-16BE のヒューリスティック判定
+	// yabファイルはASCII文字 (セミコロン、角括弧、改行、カンマなど) を多く含むため、
+	// UTF-16LEでは奇数インデックスに 0x00、UTF-16BEでは偶数インデックスに 0x00 が出現する
+	if (buffer.length >= 4) {
+		let nullOdd = 0;
+		let nullEven = 0;
+		const sampleLen = Math.min(buffer.length, 512);
+		for (let idx = 0; idx < sampleLen; idx++) {
+			if (buffer[idx] === 0x00) {
+				if (idx % 2 === 1) nullOdd++;
+				else nullEven++;
+			}
+		}
+		if (nullOdd > sampleLen / 4 && nullEven === 0) {
+			try {
+				return new TextDecoder('utf-16le', { fatal: true }).decode(buffer);
+			} catch (e) {}
+		}
+		if (nullEven > sampleLen / 4 && nullOdd === 0) {
+			try {
+				return new TextDecoder('utf-16be', { fatal: true }).decode(buffer);
+			} catch (e) {}
+		}
+	}
+
+	// 3. 厳格な UTF-8 デコード
+	try {
+		const decoder = new TextDecoder('utf-8', { fatal: true });
+		return decoder.decode(buffer);
+	} catch (e) {}
+
+	// 4. Shift_JIS / CP932 デコード
+	try {
+		const decoder = new TextDecoder('shift_jis', { fatal: true });
+		return decoder.decode(buffer);
+	} catch (e) {}
+
+	// 5. EUC-JP デコード
+	try {
+		const decoder = new TextDecoder('euc-jp', { fatal: true });
+		return decoder.decode(buffer);
+	} catch (e) {}
+
+	// 6. フォールバック
+	try {
+		return new TextDecoder('shift_jis').decode(buffer);
+	} catch (e) {
+		return new TextDecoder('utf-8').decode(buffer);
+	}
+}
+
 function printHelp() {
 	console.log(`yab2karabiner - やまぶきR(*.yab) -> Karabiner-Elements JSON 変換ツール
 
@@ -740,6 +813,7 @@ function printHelp() {
   -o, --output <file>                  出力先のJSONファイルパス (省略時は標準出力)
   -t, --title <title>                  ルールのタイトル (省略時はyabファイル1行目のコメント)
   -k, --layout <JP|US>                 キーボード配列 (デフォルト: JP)
+  -e, --encoding <enc>                 文字コード明示指定 (省略時はUTF-8/UTF-16/Shift-JIS等を自動判定)
   -L, --left-thumb <key>               左親指シフトキー (両方一括設定)
   -R, --right-thumb <key>              右親指シフトキー (両方一括設定)
   -l, --left-thumb-1 <key>             左同手親指シフトキー (デフォルト: spacebar)
@@ -771,21 +845,11 @@ function main() {
 			process.exit(1);
 		}
 		const buffer = fs.readFileSync(filePath);
-		try {
-			// UTF-8 または Shift_JIS に対応
-			const decoderUtf8 = new TextDecoder('utf-8', { fatal: true });
-			inputText = decoderUtf8.decode(buffer);
-		} catch (e) {
-			try {
-				const decoderSjis = new TextDecoder('shift_jis');
-				inputText = decoderSjis.decode(buffer);
-			} catch (e2) {
-				inputText = buffer.toString('utf-8');
-			}
-		}
+		inputText = decodeYabBuffer(buffer, options.encoding);
 	} else if (!process.stdin.isTTY) {
-		// 標準入力から読み込み
-		inputText = fs.readFileSync(0, 'utf-8');
+		// 標準入力からバイナリとして読み込み、自動判別
+		const buffer = fs.readFileSync(0);
+		inputText = decodeYabBuffer(buffer, options.encoding);
 	} else {
 		printHelp();
 		process.exit(1);
