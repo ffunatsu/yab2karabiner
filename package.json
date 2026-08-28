@@ -1,0 +1,22 @@
+{
+  "name": "yab2karabiner",
+  "version": "0.0.1",
+  "description": "Convert Yamabuki-R layout definitions (*.yab) to Karabiner-Elements JSON",
+  "main": "yab2karabiner.js",
+  "bin": {
+    "yab2karabiner": "./yab2karabiner.js"
+  },
+  "scripts": {
+    "start": "node yab2karabiner.js"
+  },
+  "keywords": [
+    "karabiner",
+    "karabiner-elements",
+    "yamabuki",
+    "keyboard",
+    "layout"
+  ],
+  "author": "potting",
+  "license": "SEE LICENSE IN README.md"
+}
+
