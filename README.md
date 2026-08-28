@@ -4,7 +4,7 @@
 
 ## 概要
 
-Web アプリケーション [Yama2Kara](https://potting.syuriken.jp/webApps/Yama2Kara/index.html) の変換ロジックを Node.js (ローカル実行) 環境向けに移植したスクリプトです。
+Web アプリケーション [Yama2Kara](https://potting.syuriken.jp/webApps/Yama2Kara/index.html) （「やまぶきRの設定ファイル(*.yab)をおおよそKarabiner-ElementsのJSONにするやーつ」） の変換ロジックを Node.js (ローカル実行) 環境向けに移植したスクリプトです。
 
 ## 必要要件
 
